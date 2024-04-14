@@ -4,8 +4,8 @@ Simple but puwerful Python-Verilog combination for DSP module verification.
 
 Brief spec:
   * Designed for time-invariant systems
-  * Real-valued signals as input and output (I will make complex-valued
-    extention in a branch later)
+  * Real-valued signals as input and output (check out "complex" branch for
+      complex-valued i/o template extention
   * No parallel input (single sample at once)
   * Python program as the top level call
   * Console mode oriented
