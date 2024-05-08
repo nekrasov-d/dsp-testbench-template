@@ -85,13 +85,15 @@ max_val =  2**(DATA_WIDTH-1)-1
 test_data       = test_data_generator( parameters )
 reference_data  = dut_model_in_python( test_data, parameters )
 
-td = open( "input.txt", "w" )
-rd = open( "ref.txt",   "w" )
-for i in range(N):
-    td.write( "%d\n" % test_data[i]      )
-    rd.write( "%d\n" % reference_data[i] )
-td.close()
-rd.close()
+
+def wrire_tb_data( fname, values ):
+    f = open( fname, "w")
+    for i in range(len(values)):
+        f.write( "%d\n" % values[i])
+    f.close()
+
+wrire_tb_data( "input.txt", test_data )
+wrire_tb_data( "ref.txt",   reference_data )
 
 
 if( TESTBENCH_MODE == "automatic" ):

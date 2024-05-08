@@ -37,6 +37,9 @@
 
 `timescale 1ns/1ns
 
+`define abs(X)   ( (X) >  0  ? (X) : -(X) )
+`define max(X,Y) ( (X) > (Y) ? (X) :  (Y) )
+
 module tb;
 
 // If you see a parameter and it is not declared here, then it is declated
@@ -131,6 +134,11 @@ task automatic monitor();
 endtask
 
 
+function automatic real calc_nmse( longint error2_acc, ref2_acc );
+  calc_nmse = 10.0*$log10( real'(error2_acc) / real'(ref2_acc) );
+endfunction
+
+
 // Updates "score" string each cycle. Waits "done" signal terminate and let
 // main process quit fork-join block
 task automatic scoreboard( );
@@ -145,11 +153,9 @@ task automatic scoreboard( );
           error       = int'(reference_data) - int'(data_o);
           error2_acc += error*error;
           ref2_acc   += int'(reference_data)*int'(reference_data);
-          nmse = 10.0*$log10( real'(error2_acc) / real'(ref2_acc) );
-          error_abs = error > 0 ? error : -error;
-          if( error_abs > max_error )
-            max_error = error_abs;
-          peak_error = ( real'(max_error) / real'(2**DATA_WIDTH)  ) * 100;
+          nmse        = calc_nmse( error2_acc, ref2_acc );
+          max_error   = `max( max_error, `abs( error ) );
+          peak_error  = ( real'(max_error) / real'(2**DATA_WIDTH)  ) * 100;
           $sformat( score, "%d samples processed, nmse: %f dB, peak error: %f %%", cnt, nmse, peak_error );
         end
       @( negedge clk );
